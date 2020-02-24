@@ -1,5 +1,11 @@
 #pragma once
 #include "generic_image_utils.h"
+#include <complex.h>
+
+IMG_MATRIX_TYPEDEF(ImageMatrix, uint8_t);
+IMG_MATRIX_TYPEDEF(ImageMatrixInt8, int8_t);
+IMG_MATRIX_TYPEDEF(ImageMatrixInt32, int32_t);
+IMG_MATRIX_TYPEDEF(ImageMatrixComplex, float complex);
 
 // basic type generic functions
 

@@ -1,7 +1,6 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
-#include <complex.h>
 
 #define SWAP(X, Y)                                                      \
     do {                                                                \
@@ -32,73 +31,3 @@
             start = pivot;                                      \
         }                                                       \
     }
-
-#define HOP_DATA(ARRAY, INDEX, STRIDE) (ARRAY)[(INDEX) * (STRIDE)]
-
-#define L1_DISTANCE_TRANSFORM_1D(DST, SRC, LEN, STRIDE)                                      \
-    do {                                                                                     \
-        (DST)[0] = (SRC)[0];                                                                 \
-        for (int16_t index = 1; index < (LEN); ++index) {                                    \
-            HOP_DATA(DST, index, STRIDE) =                                                   \
-                    MIN(HOP_DATA(DST, index - 1, STRIDE) + 1, HOP_DATA(SRC, index, STRIDE)); \
-        }                                                                                    \
-        for (int16_t index = (LEN) -2; index >= 0; --index) {                                \
-            HOP_DATA(DST, index, STRIDE) =                                                   \
-                    MIN(HOP_DATA(DST, index + 1, STRIDE) + 1, HOP_DATA(DST, index, STRIDE)); \
-        }                                                                                    \
-    } while (0)
-
-#define PARABOLA_INTERSECTION(X2, Y2, X1, Y1) \
-    (((X2) - (X1)) * ((X2) + (X1) + 1) + (Y2) - (Y1)) / (2 * ((X2) - (X1)))
-
-#define SQUARE_DISTANCE_TRANSFORM_1D(DST, SRC, LEN, STRIDE)                                       \
-    do {                                                                                          \
-        HOP_DATA(DST, 0, STRIDE) = 0;                                                             \
-        int16_t envelope_index = 0;                                                               \
-        int16_t envelope_start = 0;                                                               \
-        for (int16_t x = 1; x < (LEN); ++x) {                                                     \
-            while (1) {                                                                           \
-                int16_t envelope_x = HOP_DATA(DST, envelope_index, STRIDE);                       \
-                int16_t intersection = PARABOLA_INTERSECTION(x, HOP_DATA(SRC, x, STRIDE),         \
-                        envelope_x, HOP_DATA(SRC, envelope_x, STRIDE));                           \
-                if (envelope_start < intersection || envelope_index == 0) {                       \
-                    HOP_DATA(DST, ++envelope_index, STRIDE) = x;                                  \
-                    envelope_start = intersection;                                                \
-                    break;                                                                        \
-                }                                                                                 \
-                if (!--envelope_index) {                                                          \
-                    envelope_start = 0;                                                           \
-                    continue;                                                                     \
-                };                                                                                \
-                envelope_x = HOP_DATA(DST, envelope_index, STRIDE);                               \
-                int16_t prev_envelope_x = HOP_DATA(DST, envelope_index - 1, STRIDE);              \
-                envelope_start =                                                                  \
-                        PARABOLA_INTERSECTION(envelope_x, HOP_DATA(SRC, envelope_x, STRIDE),      \
-                                prev_envelope_x, HOP_DATA(SRC, prev_envelope_x, STRIDE));         \
-            }                                                                                     \
-        }                                                                                         \
-        envelope_start = CLAMP(envelope_start, 0, (LEN) -1);                                      \
-        int16_t envelope_end = (LEN) -1;                                                          \
-        for (; envelope_end > envelope_start; --envelope_end) {                                   \
-            HOP_DATA(DST, envelope_end, STRIDE) = HOP_DATA(DST, envelope_index, STRIDE);          \
-        }                                                                                         \
-        while (--envelope_index) {                                                                \
-            int16_t envelope_x = HOP_DATA(DST, envelope_index, STRIDE);                           \
-            int16_t prev_envelope_x = HOP_DATA(DST, envelope_index - 1, STRIDE);                  \
-            envelope_start = PARABOLA_INTERSECTION(envelope_x, HOP_DATA(SRC, envelope_x, STRIDE), \
-                    prev_envelope_x, HOP_DATA(SRC, prev_envelope_x, STRIDE));                     \
-            envelope_start = CLAMP(envelope_start, 0, (LEN) -1);                                  \
-            for (int16_t x = envelope_start; x < envelope_end; ++x) {                             \
-                HOP_DATA(DST, x + 1, STRIDE) = HOP_DATA(DST, envelope_index, STRIDE);             \
-            }                                                                                     \
-            envelope_end = envelope_start;                                                        \
-        }                                                                                         \
-        while (envelope_start-- > 0) {                                                            \
-            HOP_DATA(DST, envelope_start + 1, STRIDE) = HOP_DATA(DST, 0, STRIDE);                 \
-        }                                                                                         \
-        for (int16_t x = 0; x < (LEN); ++x) {                                                     \
-            int16_t envelope_x = HOP_DATA(DST, MIN(x, (LEN) -1), STRIDE);                         \
-            int16_t dx = x - envelope_x;                                                          \
-            HOP_DATA(DST, x, STRIDE) = HOP_DATA(SRC, envelope_x, STRIDE) + SQR(dx);               \
-        }                                                                                         \
-    } while (0)

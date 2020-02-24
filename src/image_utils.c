@@ -3,6 +3,14 @@
 #include <assert.h>
 #include <stdio.h>
 
+#define IN_TYPE uint8_t
+#define OUT_TYPE int32_t
+#include "distance_transform_impl.h"
+
+#define IN_TYPE int32_t
+#define OUT_TYPE int32_t
+#include "distance_transform_impl.h"
+
 void img_convolution_filter(ImageMatrix* dst, const ImageMatrix src, const ImageMatrixInt8 kernel) {
     IMG_CONVOLUTION(*dst, src, kernel, 1, 0, UINT8_MAX);
 }
@@ -261,11 +269,11 @@ void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
 }
 
 void img_l1_distance_transform(ImageMatrixInt32* dst, const ImageMatrix src) {
-    IMG_SEPARABLE_2D_TRANSFORM(*dst, src, L1_DISTANCE_TRANSFORM_1D, 0);
+    //    IMG_SEPARABLE_2D_TRANSFORM(*dst, src, L1_DISTANCE_TRANSFORM_1D, 0);
 }
 
 void img_square_distance_transform(ImageMatrixInt32* dst, const ImageMatrix src) {
-    IMG_SEPARABLE_2D_TRANSFORM(*dst, src, SQUARE_DISTANCE_TRANSFORM_1D, 1);
+    //    IMG_SEPARABLE_2D_TRANSFORM(*dst, src, SQUARE_DISTANCE_TRANSFORM_1D, 1);
 }
 
 void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src) {

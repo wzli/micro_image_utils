@@ -1,6 +1,6 @@
 #pragma once
-#include "math_utils.h"
 #include "generic_algorithms.h"
+#include "math_utils.h"
 
 typedef struct {
     int16_t x;
@@ -12,11 +12,6 @@ typedef struct {
         TYPE* data;                    \
         ImagePoint size;               \
     } NAME
-
-IMG_MATRIX_TYPEDEF(ImageMatrix, uint8_t);
-IMG_MATRIX_TYPEDEF(ImageMatrixInt8, int8_t);
-IMG_MATRIX_TYPEDEF(ImageMatrixInt32, int32_t);
-IMG_MATRIX_TYPEDEF(ImageMatrixComplex, float complex);
 
 // type generic macro functions for image manipulation
 
