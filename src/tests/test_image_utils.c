@@ -1,9 +1,8 @@
 #include "test_utils.h"
 #include "image_utils.h"
-#include <stdlib.h>
 
-static ImageMatrix test_img = {NULL, {5, 5}};
-static ImageMatrix buf_img = {NULL, {5, 5}};
+static ImageMatrix test_img;
+static ImageMatrix buf_img;
 
 static int test_image_size() {
     test_assert(IMG_PIXEL_COUNT(test_img) == 25);
@@ -138,13 +137,12 @@ static int test_image_normalize() {
 }
 
 static int test_image_otsu_histogram() {
-    uint32_t* histogram = malloc(256 * sizeof(uint32_t));
+    uint32_t histogram[256];
     img_histogram(histogram, test_img);
     for (int i = 0; i < 256; ++i) {
         test_assert(histogram[i] == (i < 25));
     }
     test_assert(img_compute_otsu_threshold(histogram) == 12);
-    free(histogram);
     return 0;
 }
 
@@ -233,8 +231,10 @@ static int test_image_fast_fourier_transform() {
 }
 
 int test_image_utils() {
-    test_img.data = malloc(IMG_PIXEL_COUNT(test_img));
-    buf_img.data = malloc(2 * IMG_PIXEL_COUNT(buf_img));
+    uint8_t test_img_data[5 * 5];
+    uint8_t buf_img_data[5 * 5 * 2];
+    test_img = (ImageMatrix){test_img_data, {5, 5}};
+    buf_img = (ImageMatrix){buf_img_data, {5, 5}};
     test_run(test_image_size);
     test_run(test_image_set_pixels);
     test_run(test_image_copy);
@@ -258,7 +258,5 @@ int test_image_utils() {
     test_run(test_image_max_filter);
     test_run(test_image_min_filter);
     test_run(test_image_fast_fourier_transform);
-    free(test_img.data);
-    free(buf_img.data);
     return 0;
 }
