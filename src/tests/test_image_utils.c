@@ -225,9 +225,9 @@ static int test_image_min_filter() {
 static int test_image_fast_fourier_transform() {
     ImageMatrixComplex img = {(float complex[4 * 4]){}, {4, 4}};
     IMG_FILL(img, 1);
-    img_fast_fourier_transform(img);
+    img_fast_fourier_transform(img, false);
     FOR_EACH_PIXEL(img) { test_assert(PIXEL(img, row, col) == (!row && !col) * 16); }
-    img_inverse_fast_fourier_transform(img);
+    img_fast_fourier_transform(img, true);
     FOR_EACH_PIXEL(img) { test_assert(PIXEL(img, row, col) == 1); }
     return 0;
 }

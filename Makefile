@@ -2,7 +2,7 @@ BUILD_DIR ?= ./build
 SRC_DIR ?= ./src
 INC_DIR ?= ./include
 
-SRCS := $(shell find -L $(SRC_DIR) -name "*.cpp" -or -name "*.c") main.c
+SRCS := $(shell find -L $(SRC_DIR) -name "*.cpp" -or -name "*.c") test.c
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 

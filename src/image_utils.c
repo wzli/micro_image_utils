@@ -1,4 +1,5 @@
 #include "image_utils.h"
+#include "mfft.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -238,20 +239,8 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
     };
 }
 
-#define FAST_FOURIER_TRANSFORM_FLOAT(DST, SRC, LEN, STRIDE) \
-    FAST_FOURIER_TRANSFORM(float, DST, LEN, STRIDE, false)
-
-#define INVERSE_FAST_FOURIER_TRANSFORM_FLOAT(DST, SRC, LEN, STRIDE) \
-    FAST_FOURIER_TRANSFORM(float, DST, LEN, STRIDE, true)
-
-void img_fast_fourier_transform(ImageMatrixComplex mat) {
-    assert(mat.data && IS_POWER_OF_TWO(mat.size.x) && IS_POWER_OF_TWO(mat.size.y));
-    IMG_SEPARABLE_2D_TRANSFORM(mat, mat, FAST_FOURIER_TRANSFORM_FLOAT, 0);
-}
-
-void img_inverse_fast_fourier_transform(ImageMatrixComplex mat) {
-    assert(mat.data && IS_POWER_OF_TWO(mat.size.x) && IS_POWER_OF_TWO(mat.size.y));
-    IMG_SEPARABLE_2D_TRANSFORM(mat, mat, INVERSE_FAST_FOURIER_TRANSFORM_FLOAT, 0);
+void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse) {
+    fft_2d(mat.data, mat.size.x, mat.size.y, inverse);
 }
 
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
