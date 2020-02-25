@@ -74,8 +74,8 @@ void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src);
 static inline void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse) {
     fft_2d(mat.data, mat.size.x, mat.size.y, inverse);
 }
-static inline void img_l1_distance_transform(ImageMatrixInt32 mat) {
-    l1_distance_transform_2d(mat.data, mat.data, mat.size.x, mat.size.y);
+static inline void img_manhattan_distance_transform(ImageMatrixInt32 mat) {
+    manhattan_distance_transform_2d(mat.data, mat.data, mat.size.x, mat.size.y);
 }
 // square distance transform REQUIRES buffer to be size (x_len + 1)*(y_len + 1)
 static inline void img_square_distance_transform(ImageMatrixInt32 mat) {
