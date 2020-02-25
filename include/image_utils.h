@@ -67,11 +67,11 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
         uint8_t order, uint8_t color, uint8_t width);
 
 // domain transforms
-void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse);
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src);
-void img_l1_distance_transform(ImageMatrixInt32* dst, const ImageMatrix src);
-// square distance transform requires line buffer, Eg dst buf size = (src.size.x)(src.size.y + 1)
-void img_square_distance_transform(ImageMatrixInt32* dst, const ImageMatrix src);
+void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse);
+void img_l1_distance_transform(ImageMatrixInt32 mat);
+// square distance transform REQUIRES buffer to be size (x_len + 1)*(y_len + 1)
+void img_square_distance_transform(ImageMatrixInt32 mat);
 
 // format conversions
 void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src);

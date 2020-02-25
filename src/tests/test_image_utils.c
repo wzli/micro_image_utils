@@ -180,12 +180,14 @@ static int test_image_draw_box() {
 }
 
 static int test_image_distance_transform() {
-    IMG_FILL(buf_img, 255);
-    PIXEL(buf_img, 0, 0) = 0;
-    ImageMatrixInt32 dist_img = {(int32_t[5 * 6]){}, {5, 5}};
-    img_l1_distance_transform(&dist_img, buf_img);
+    ImageMatrixInt32 dist_img = {(int32_t[6 * 6]){}, {5, 5}};
+    IMG_FILL(dist_img, 255);
+    PIXEL(dist_img, 0, 0) = 0;
+    img_l1_distance_transform(dist_img);
     FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == row + col); }
-    img_square_distance_transform(&dist_img, buf_img);
+    IMG_FILL(dist_img, 255);
+    PIXEL(dist_img, 0, 0) = 0;
+    img_square_distance_transform(dist_img);
     FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == SQR(row) + SQR(col)); }
     return 0;
 }
