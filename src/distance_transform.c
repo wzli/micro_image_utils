@@ -40,7 +40,7 @@ void square_distance_transform_1d(int* dst, const int* src, int len, int stride)
             int envelope_x = dst[envelope_i * stride];
             int intersection =
                     parabola_intersection(x, src[x * stride], envelope_x, src[envelope_x * stride]);
-            if (envelope_start <= intersection || envelope_i == 0) {
+            if (envelope_start < intersection || envelope_i == 0) {
                 ++envelope_i;
                 dst[envelope_i * stride] = x;
                 envelope_start = intersection;
@@ -61,7 +61,7 @@ void square_distance_transform_1d(int* dst, const int* src, int len, int stride)
     for (; envelope_end > envelope_start; --envelope_end) {
         dst[envelope_end * stride] = dst[envelope_i * stride];
     }
-    while (--envelope_i) {
+    while (--envelope_i > 0) {
         int envelope_x = dst[envelope_i * stride];
         int prev_envelope_x = dst[(envelope_i - 1) * stride];
         envelope_start = parabola_intersection(envelope_x, src[envelope_x * stride],
@@ -76,9 +76,10 @@ void square_distance_transform_1d(int* dst, const int* src, int len, int stride)
         dst[(envelope_start + 1) * stride] = dst[0];
     }
     for (int x = 0; x < len; ++x) {
-        int envelope_x = dst[MIN(x, len - 1) * stride];
+        int envelope_x = dst[MIN(x + 1, len - 1) * stride];
         int dx = x - envelope_x;
         dst[x * stride] = src[envelope_x * stride] + (dx * dx);
+        dst[x * stride] = MIN(dst[x * stride], src[x * stride]);
     }
 }
 
@@ -88,9 +89,11 @@ void square_distance_transform_2d(int* dst, const int* src, int x_len, int y_len
             dst[x + 1 + (y + 1) * (x_len + 1)] = src[x + y * x_len];
         }
     }
-    for (int x = 0; x < x_len; ++x) {
-        square_distance_transform_1d(dst + x + x_len + 1, dst + x + x_len + 2, y_len, x_len + 1);
+    dst += x_len + 1;
+    for (int x = 0; x < x_len; ++x, ++dst) {
+        square_distance_transform_1d(dst, dst + 1, y_len, x_len + 1);
     }
+    dst -= 2 * x_len + 1;
     for (int y = 0; y < y_len; ++y, dst += x_len) {
         square_distance_transform_1d(dst, dst + y + x_len + 1, x_len, 1);
     }

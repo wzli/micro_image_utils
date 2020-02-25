@@ -179,13 +179,24 @@ static int test_image_draw_box() {
     return 0;
 }
 
-static int test_image_distance_transform() {
-    ImageMatrixInt32 dist_img = {(int32_t[6 * 6]){}, {5, 5}};
+static int test_image_l1_distance_transform() {
+    ImageMatrixInt32 dist_img = {(int32_t[5 * 5]){}, {5, 5}};
     IMG_FILL(dist_img, 255);
+    img_l1_distance_transform(dist_img);
+    FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == 255); }
+
     PIXEL(dist_img, 0, 0) = 0;
     img_l1_distance_transform(dist_img);
     FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == row + col); }
+    return 0;
+}
+
+static int test_image_square_distance_transform() {
+    ImageMatrixInt32 dist_img = {(int32_t[6 * 6]){}, {5, 5}};
     IMG_FILL(dist_img, 255);
+    img_square_distance_transform(dist_img);
+    FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == 255); }
+
     PIXEL(dist_img, 0, 0) = 0;
     img_square_distance_transform(dist_img);
     FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == SQR(row) + SQR(col)); }
@@ -256,7 +267,8 @@ int test_image_utils() {
     test_run(test_image_resize);
     test_run(test_image_draw_line);
     test_run(test_image_draw_box);
-    test_run(test_image_distance_transform);
+    test_run(test_image_l1_distance_transform);
+    test_run(test_image_square_distance_transform);
     test_run(test_image_max_filter);
     test_run(test_image_min_filter);
     test_run(test_image_fast_fourier_transform);

@@ -12,7 +12,13 @@ $(BUILD_DIR)/test: $(OBJS)
 INC_DIRS := $(shell find -L $(INC_DIR) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-COMMONFLAGS =  -Wall -Wextra -Ofast -DNDEBUG #-Og -g -DDEBUG
+COMMONFLAGS = -Wall -Wextra
+
+ifeq ($(mode), debug)
+    COMMONFLAGS += -Og -g -DDEBUG
+else
+    COMMONFLAGS += -Ofast -DNDEBUG
+endif
 
 CFLAGS ?= -std=c99 -Werror=double-promotion $(COMMONFLAGS)
 CC ?= gcc
