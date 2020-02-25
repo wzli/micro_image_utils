@@ -1,3 +1,6 @@
 [submodule "submodules/mfft"]
 	path = submodules/mfft
 	url = https://github.com/wzli/mfft
+[submodule "submodules/distance_transform"]
+	path = submodules/distance_transform
+	url = https://github.com/wzli/distance_transform
