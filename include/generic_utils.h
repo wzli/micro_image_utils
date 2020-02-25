@@ -1,6 +1,15 @@
 #pragma once
 #include <stdint.h>
-#include <stdbool.h>
+
+#define SGN(X) (((X) > 0) - ((X) < 0))
+#define ABS(X) ((X) < 0 ? -(X) : (X))
+#define SQR(X) ((X) * (X))
+#define CUBE(X) ((x) * (X) * (X))
+#define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
+#define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
+#define CLAMP(X, MIN, MAX) ((X) < (MIN) ? (MIN) : (X) > (MAX) ? (MAX) : (X))
+#define IS_SIGNED(Type) ((Type) -1 < 0x7F)
+#define IS_POWER_OF_TWO(X) !(X & (X - 1))
 
 #define SWAP(X, Y)                                                      \
     do {                                                                \

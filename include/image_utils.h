@@ -1,6 +1,8 @@
 #pragma once
 #include "generic_image_utils.h"
-#include <complex.h>
+#include "math_utils.h"
+#include "mfft.h"
+#include "distance_transform.h"
 
 IMG_MATRIX_TYPEDEF(ImageMatrix, uint8_t);
 IMG_MATRIX_TYPEDEF(ImageMatrixInt8, int8_t);
@@ -68,10 +70,17 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
 
 // domain transforms
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src);
-void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse);
-void img_l1_distance_transform(ImageMatrixInt32 mat);
+
+static inline void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse) {
+    fft_2d(mat.data, mat.size.x, mat.size.y, inverse);
+}
+static inline void img_l1_distance_transform(ImageMatrixInt32 mat) {
+    l1_distance_transform_2d(mat.data, mat.data, mat.size.x, mat.size.y);
+}
 // square distance transform REQUIRES buffer to be size (x_len + 1)*(y_len + 1)
-void img_square_distance_transform(ImageMatrixInt32 mat);
+static inline void img_square_distance_transform(ImageMatrixInt32 mat) {
+    square_distance_transform_2d(mat.data, mat.data, mat.size.x, mat.size.y);
+}
 
 // format conversions
 void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src);

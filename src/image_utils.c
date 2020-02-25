@@ -1,6 +1,4 @@
 #include "image_utils.h"
-#include "distance_transform.h"
-#include "mfft.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -240,10 +238,6 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
     };
 }
 
-void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse) {
-    fft_2d(mat.data, mat.size.x, mat.size.y, inverse);
-}
-
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
     IMG_FILL(dst, 0);
     float angle_resolution = M_PI / dst.size.y;
@@ -259,14 +253,6 @@ void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
         }
     }
     IMG_NORMALIZE(dst, dst);
-}
-
-void img_l1_distance_transform(ImageMatrixInt32 mat) {
-    l1_distance_transform_2d(mat.data, mat.data, mat.size.x, mat.size.y);
-}
-
-void img_square_distance_transform(ImageMatrixInt32 mat) {
-    square_distance_transform_2d(mat.data, mat.data, mat.size.x, mat.size.y);
 }
 
 void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src) {

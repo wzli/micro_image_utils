@@ -1,5 +1,17 @@
 #include "test_utils.h"
-#include "generic_algorithms.h"
+#include "generic_utils.h"
+
+static int test_is_signed() {
+    test_assert(!IS_SIGNED(uint8_t));
+    test_assert(!IS_SIGNED(uint16_t));
+    test_assert(!IS_SIGNED(uint32_t));
+    test_assert(!IS_SIGNED(uint64_t));
+    test_assert(IS_SIGNED(int8_t));
+    test_assert(IS_SIGNED(int16_t));
+    test_assert(IS_SIGNED(int32_t));
+    test_assert(IS_SIGNED(int64_t));
+    return 0;
+}
 
 static int test_swap() {
     int8_t ai = 3;
@@ -23,7 +35,8 @@ static int test_quick_select() {
     return 0;
 }
 
-int test_generic_algorithms() {
+int test_generic_utils() {
+    test_run(test_is_signed);
     test_run(test_swap);
     test_run(test_quick_select);
     return 0;

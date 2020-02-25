@@ -1,25 +1,14 @@
 #pragma once
 #include <stdint.h>
-#include <limits.h>
 #include <math.h>
 
 #ifndef M_PI
 #define M_PI (3.1415926f)
 #endif
 
-#ifndef M_SQRT1_2
-#define M_SQRT1_2 (0.707106781f)
+#ifndef M_fsqrT1_2
+#define M_fsqrT1_2 (0.707106781f)
 #endif
-
-#define SGN(X) (((X) > 0) - ((X) < 0))
-#define ABS(X) ((X) < 0 ? -(X) : (X))
-#define SQR(X) ((X) * (X))
-#define CUBE(X) ((x) * (X) * (X))
-#define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
-#define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
-#define CLAMP(X, MIN, MAX) ((X) < (MIN) ? (MIN) : (X) > (MAX) ? (MAX) : (X))
-#define IS_SIGNED(Type) ((Type) -1 < 0x7F)
-#define IS_POWER_OF_TWO(X) !(X & (X - 1))
 
 typedef struct {
     float x;
@@ -30,6 +19,10 @@ typedef union {
     float elements[4];
     Vector2f rows[2];
 } Matrix2f;
+
+static inline float fsqr(float x) {
+    return x * x;
+}
 
 // vector operations
 static inline uint8_t v2f_is_zero(Vector2f vec) {
@@ -65,11 +58,11 @@ static inline float v2f_cross(Vector2f a, Vector2f b) {
 }
 
 static inline float v2f_norm_l1(Vector2f vec) {
-    return ABS(vec.x) + ABS(vec.y);
+    return fabs(vec.x) + fabs(vec.y);
 }
 
 static inline float v2f_norm_sqr(Vector2f vec) {
-    return SQR(vec.x) + SQR(vec.y);
+    return fsqr(vec.x) + fsqr(vec.y);
 }
 
 static inline float v2f_norm(Vector2f vec) {
@@ -102,7 +95,7 @@ static inline Vector2f v2f_rotate(Vector2f vec, Vector2f rot) {
 }
 
 static inline Vector2f v2f_double_angle(Vector2f rot) {
-    return (Vector2f){SQR(rot.x) - SQR(rot.y), 2.0f * rot.x * rot.y};
+    return (Vector2f){fsqr(rot.x) - fsqr(rot.y), 2.0f * rot.x * rot.y};
 }
 
 static inline Vector2f v2f_half_angle(Vector2f rot) {

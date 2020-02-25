@@ -1,6 +1,5 @@
 #pragma once
-#include "generic_algorithms.h"
-#include "math_utils.h"
+#include "generic_utils.h"
 
 typedef struct {
     int16_t x;
@@ -152,17 +151,4 @@ typedef struct {
         } else {                                                 \
             IMG_NORMALIZE_RANGE(DST, SRC, min_pixel, max_pixel); \
         }                                                        \
-    } while (0)
-
-#define IMG_SEPARABLE_2D_TRANSFORM(DST, SRC, TRANSFORM_1D, LINE_BUFFER)                           \
-    do {                                                                                          \
-        (DST).size = (SRC).size;                                                                  \
-        (DST).data += (SRC).size.x * (LINE_BUFFER);                                               \
-        for (int16_t col = 0; col < (SRC).size.x; ++col) {                                        \
-            TRANSFORM_1D((DST).data + col, (SRC).data + col, (SRC).size.y, (SRC).size.x);         \
-        }                                                                                         \
-        for (int16_t row = 0; row < (SRC).size.y; ++row, (DST).data += (SRC).size.x) {            \
-            TRANSFORM_1D((DST).data - (SRC).size.x * (LINE_BUFFER), (DST).data, (SRC).size.x, 1); \
-        }                                                                                         \
-        (DST).data -= IMG_PIXEL_COUNT(DST) + (SRC).size.x * (LINE_BUFFER);                        \
     } while (0)

@@ -1,11 +1,14 @@
-// TODO link to reference paper
-#include "math_utils.h"
+/*
+    based on:
+    Distance Transforms of Sampled Functions
+    P. Felzenszwalb, D. Huttenlocher
+    Theory of Computing, Vol. 8, No. 19, September 2012
+*/
 
-#ifndef MIN
 #define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
-#endif
+#define CLAMP(X, MIN, MAX) ((X) < (MIN) ? (MIN) : (X) > (MAX) ? (MAX) : (X))
 
-void l1_distance_transform(int* dst, const int* src, int len, int stride) {
+void l1_distance_transform_1d(int* dst, const int* src, int len, int stride) {
     dst[0] = src[0];
     for (int i = 1; i < len; ++i) {
         dst[i * stride] = MIN(dst[(i - 1) * stride] + 1, src[i * stride]);
@@ -17,10 +20,10 @@ void l1_distance_transform(int* dst, const int* src, int len, int stride) {
 
 void l1_distance_transform_2d(int* dst, const int* src, int x_len, int y_len) {
     for (int x = 0; x < x_len; ++x) {
-        l1_distance_transform(dst + x, src + x, y_len, x_len);
+        l1_distance_transform_1d(dst + x, src + x, y_len, x_len);
     }
     for (int y = 0; y < y_len; ++y, dst += x_len) {
-        l1_distance_transform(dst, dst, x_len, 1);
+        l1_distance_transform_1d(dst, dst, x_len, 1);
     }
 }
 
@@ -28,7 +31,7 @@ static int parabola_intersection(int x2, int y2, int x1, int y1) {
     return ((x2 - x1) * (x2 + x1 + 1) + y2 - y1) / (2 * (x2 - x1));
 }
 
-void square_distance_transform(int* dst, const int* src, int len, int stride) {
+void square_distance_transform_1d(int* dst, const int* src, int len, int stride) {
     dst[0] = 0;
     int envelope_i = 0;
     int envelope_start = 0;
@@ -86,9 +89,9 @@ void square_distance_transform_2d(int* dst, const int* src, int x_len, int y_len
         }
     }
     for (int x = 0; x < x_len; ++x) {
-        square_distance_transform(dst + x + x_len + 1, dst + x + x_len + 2, y_len, x_len + 1);
+        square_distance_transform_1d(dst + x + x_len + 1, dst + x + x_len + 2, y_len, x_len + 1);
     }
     for (int y = 0; y < y_len; ++y, dst += x_len) {
-        square_distance_transform(dst, dst + y + x_len + 1, x_len, 1);
+        square_distance_transform_1d(dst, dst + y + x_len + 1, x_len, 1);
     }
 }
