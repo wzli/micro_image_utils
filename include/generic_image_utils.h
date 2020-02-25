@@ -46,6 +46,11 @@ typedef struct {
 #define IMG_PIXEL_MIN(MIN_VAL, MAT) \
     FOR_EACH_PIXEL(MAT)(MIN_VAL = MIN(MIN_VAL, PIXEL(MAT, row, col)))
 
+#define IMG_PIXEL_LATCH_INDEX(VAL, ROW, COL, OPS, MAT) \
+    FOR_EACH_PIXEL(MAT)                                \
+    if (PIXEL(MAT, row, col) OPS(VAL))                 \
+    ((ROW) = row, (COL) = col, (VAL) = PIXEL(MAT, row, col))
+
 #define IMG_PIXEL_AVERAGE(AVG, MAT)  \
     do {                             \
         IMG_PIXEL_SUM(AVG, MAT);     \

@@ -60,6 +60,17 @@ static int test_image_pixel_min() {
     return 0;
 }
 
+static int test_image_pixel_latch_index() {
+    uint8_t min = UINT8_MAX;
+    uint8_t min_x = -1;
+    uint8_t min_y = -1;
+    IMG_PIXEL_LATCH_INDEX(min, min_y, min_x, <, test_img);
+    test_assert(min == 0);
+    test_assert(min_x == 0);
+    test_assert(min_y == 0);
+    return 0;
+}
+
 static int test_image_apply_kernel() {
     int32_t acc = 0;
     IMG_PIXEL_WEIGHTED_SUM(acc, img_edge_detect_kernel, test_img, 0, 0);
@@ -256,6 +267,7 @@ int test_image_utils() {
     test_run(test_image_pixel_average);
     test_run(test_image_pixel_max);
     test_run(test_image_pixel_min);
+    test_run(test_image_pixel_latch_index);
     test_run(test_image_apply_kernel);
     test_run(test_image_threshold);
     test_run(test_image_crop);
