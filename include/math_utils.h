@@ -6,8 +6,8 @@
 #define M_PI (3.1415926f)
 #endif
 
-#ifndef M_fsqrT1_2
-#define M_fsqrT1_2 (0.707106781f)
+#ifndef M_SQRT1_2
+#define M_SQRT1_2 (0.707106781f)
 #endif
 
 typedef struct {
@@ -20,8 +20,20 @@ typedef union {
     Vector2f rows[2];
 } Matrix2f;
 
-static inline float fsqr(float x) {
+static inline float sqrf(float x) {
     return x * x;
+}
+
+static inline float inv_sqrtf(float x) {
+    const float x2 = x * 0.5f;
+    const float threehalfs = 1.5f;
+    union {
+        float f;
+        uint32_t i;
+    } conv = {x};
+    conv.i = 0x5f3759df - (conv.i >> 1);
+    conv.f *= (threehalfs - (x2 * conv.f * conv.f));
+    return conv.f;
 }
 
 // vector operations
@@ -58,11 +70,11 @@ static inline float v2f_cross(Vector2f a, Vector2f b) {
 }
 
 static inline float v2f_norm_l1(Vector2f vec) {
-    return fabs(vec.x) + fabs(vec.y);
+    return fabsf(vec.x) + fabsf(vec.y);
 }
 
 static inline float v2f_norm_sqr(Vector2f vec) {
-    return fsqr(vec.x) + fsqr(vec.y);
+    return sqrf(vec.x) + sqrf(vec.y);
 }
 
 static inline float v2f_norm(Vector2f vec) {
@@ -70,7 +82,7 @@ static inline float v2f_norm(Vector2f vec) {
 }
 
 static inline Vector2f v2f_normalize(Vector2f vec) {
-    return v2f_scale(vec, 1.0f / v2f_norm(vec));
+    return v2f_scale(vec, inv_sqrtf(v2f_norm_sqr(vec)));
 }
 
 static inline Vector2f v2f_midpoint(Vector2f a, Vector2f b) {
@@ -95,7 +107,7 @@ static inline Vector2f v2f_rotate(Vector2f vec, Vector2f rot) {
 }
 
 static inline Vector2f v2f_double_angle(Vector2f rot) {
-    return (Vector2f){fsqr(rot.x) - fsqr(rot.y), 2.0f * rot.x * rot.y};
+    return (Vector2f){sqrf(rot.x) - sqrf(rot.y), 2.0f * rot.x * rot.y};
 }
 
 static inline Vector2f v2f_half_angle(Vector2f rot) {

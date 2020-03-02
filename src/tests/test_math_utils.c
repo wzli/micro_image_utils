@@ -1,5 +1,18 @@
 #include "test_utils.h"
 #include "math_utils.h"
+#include "stdbool.h"
+
+static inline bool compare_inv_sqrt(float x) {
+    static const float tolerance = 0.002f;
+    return fabsf(inv_sqrtf(x) * sqrtf(x) - 1) < tolerance;
+};
+
+static int test_inv_sqrtf() {
+    for (float f = 0.0001f; f < 100000; f *= 10) {
+        test_assert(compare_inv_sqrt(f));
+    }
+    return 0;
+}
 
 static int test_matrix2f_inverse() {
     Matrix2f mat = {{0, 1, 2, 3}};
@@ -12,6 +25,7 @@ static int test_matrix2f_inverse() {
 }
 
 int test_math_utils() {
+    test_run(test_inv_sqrtf);
     test_run(test_matrix2f_inverse);
     return 0;
 }
