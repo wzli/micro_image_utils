@@ -10,10 +10,10 @@ static int test_image_size() {
 }
 
 static int test_image_set_pixels() {
-    int i = 0;
     for (int i = 0; i < IMG_PIXEL_COUNT(test_img); ++i) {
         test_img.data[i] = i;
     }
+    int i = 0;
     FOR_EACH_PIXEL(test_img) { test_assert(PIXEL(test_img, row, col) == i++); };
     return 0;
 }
@@ -60,11 +60,15 @@ static int test_image_pixel_min() {
     return 0;
 }
 
+static inline bool latch_comp(uint8_t cur_val, uint8_t min_val) {
+    return cur_val < min_val;
+}
+
 static int test_image_pixel_latch_index() {
     uint8_t min = UINT8_MAX;
     uint8_t min_x = -1;
     uint8_t min_y = -1;
-    IMG_PIXEL_LATCH_INDEX(min, min_y, min_x, <, test_img);
+    IMG_PIXEL_LATCH_INDEX(min, min_y, min_x, latch_comp, test_img);
     test_assert(min == 0);
     test_assert(min_x == 0);
     test_assert(min_y == 0);
