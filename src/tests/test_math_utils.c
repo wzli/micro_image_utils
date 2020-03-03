@@ -17,10 +17,10 @@ static int test_inv_sqrtf() {
 static int test_matrix2f_inverse() {
     Matrix2f mat = {{0, 1, 2, 3}};
     Matrix2f identity = m2f_multiply(mat, m2f_inverse(mat));
-    test_assert(identity.elements[0] == 1);
-    test_assert(identity.elements[1] == 0);
-    test_assert(identity.elements[2] == 0);
-    test_assert(identity.elements[3] == 1);
+    test_assert(identity.a == 1);
+    test_assert(identity.b == 0);
+    test_assert(identity.c == 0);
+    test_assert(identity.d == 1);
     return 0;
 }
 
