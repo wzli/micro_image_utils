@@ -4,13 +4,23 @@
 #include <complex.h>
 #include <math.h>
 
-#ifndef M_PI
-#define M_PI (3.1415926f)
-#endif
+// define math constants
 
-#ifndef M_SQRT1_2
-#define M_SQRT1_2 (0.707106781f)
-#endif
+static const float M_E_F = expf(1);
+static const float M_LOG2E_F = 1.0f / logf(2);
+static const float M_LOG10E_F = 1.0f / logf(10);
+static const float M_LN2_F = logf(2);
+static const float M_LN10_F = logf(10);
+static const float M_PI_F = acosf(-1);
+static const float M_PI_2_F = asinf(1);
+static const float M_PI_4_F = atanf(1);
+static const float M_1_PI_F = 1.0f / acosf(-1);
+static const float M_2_PI_F = 1.0f / asinf(1);
+static const float M_2_SQRTPI_F = 2.0f / sqrtf(acosf(-1));
+static const float M_SQRT2_F = sqrtf(2);
+static const float M_SQRT1_2_F = 1.0f / sqrtf(2);
+
+// define structs
 
 typedef union {
     struct {

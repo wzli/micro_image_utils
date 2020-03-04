@@ -228,8 +228,7 @@ void img_draw_polygon(
 
 void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f center_to_vertex,
         uint8_t order, uint8_t color, uint8_t width) {
-    Vector2f rotation_increment = {
-            {cosf(2 * (float) M_PI / order), sinf(2 * (float) M_PI / order)}};
+    Vector2f rotation_increment = {{cosf(2 * M_PI_F / order), sinf(2 * M_PI_F / order)}};
     ImagePoint previous_vertex = {center.x + center_to_vertex.x, center.y + center_to_vertex.y};
     for (uint8_t i = 0; i < order; ++i) {
         center_to_vertex.z *= rotation_increment.z;
@@ -241,7 +240,7 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
 
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
     IMG_FILL(dst, 0);
-    float angle_resolution = M_PI / dst.size.y;
+    float angle_resolution = M_PI_F / dst.size.y;
     float scale_to_index =
             dst.size.x / sqrtf((src.size.y * src.size.y) + (src.size.x * src.size.x));
     const Vector2f rot_inc = {{cosf(angle_resolution), sinf(angle_resolution)}};
