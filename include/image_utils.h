@@ -7,7 +7,7 @@
 IMG_MATRIX_TYPEDEF(ImageMatrix, uint8_t);
 IMG_MATRIX_TYPEDEF(ImageMatrixInt8, int8_t);
 IMG_MATRIX_TYPEDEF(ImageMatrixInt32, int32_t);
-IMG_MATRIX_TYPEDEF(ImageMatrixComplex, float complex);
+IMG_MATRIX_TYPEDEF(ImageMatrixComplex, Vector2f);
 
 // basic type generic functions
 
@@ -72,7 +72,7 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src);
 
 static inline void img_fast_fourier_transform(ImageMatrixComplex mat, bool inverse) {
-    fft_2d(mat.data, mat.size.x, mat.size.y, inverse);
+    fft_2d(&mat.data->z, mat.size.x, mat.size.y, inverse);
 }
 static inline void img_manhattan_distance_transform(ImageMatrixInt32 mat) {
     manhattan_distance_transform_2d(mat.data, mat.data, mat.size.x, mat.size.y);
