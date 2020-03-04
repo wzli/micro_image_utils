@@ -39,7 +39,7 @@ uint8_t img_bilinear_interpolation(const ImageMatrix mat, Vector2f position) {
     int16_t top = MAX(bottom - 1, 0);
     right = MIN(right, mat.size.x - 1);
     bottom = MIN(bottom, mat.size.y - 1);
-    Vector2f progress = {position.x - 0.5f - left, position.y - 0.5f - top};
+    Vector2f progress = {{position.x - 0.5f - left, position.y - 0.5f - top}};
     float top_average = (float) PIXEL(mat, top, left) +
                         progress.x * (PIXEL(mat, top, right) - PIXEL(mat, top, left));
     float bottom_average = (float) PIXEL(mat, bottom, left) +
@@ -73,9 +73,9 @@ uint8_t img_bicubic_interpolation(const ImageMatrix mat, Vector2f position) {
 
 void img_resize(ImageMatrix dst, const ImageMatrix src, ImageInterpolation interpolation) {
     assert(interpolation);
-    Vector2f scale = {(float) src.size.x / dst.size.x, (float) src.size.y / dst.size.y};
+    Vector2f scale = {{(float) src.size.x / dst.size.x, (float) src.size.y / dst.size.y}};
     FOR_EACH_PIXEL(dst) {
-        Vector2f position = {0.5f + col, 0.5f + row};
+        Vector2f position = {{0.5f + col, 0.5f + row}};
         PIXEL(dst, row, col) = interpolation(src, v2f_multiply(position, scale));
     }
 }
@@ -91,12 +91,12 @@ void img_affine_transform(ImageMatrix dst, const ImageMatrix src, Matrix2f trans
     assert(interpolation);
     assert(!m2f_is_nan(transform));
     assert(m2f_determinant(transform) != 0.0f);
-    Vector2f src_center = {0.5f * src.size.x, 0.5f * src.size.y};
-    Vector2f dst_center = {0.5f * dst.size.x, 0.5f * dst.size.y};
+    Vector2f src_center = {{0.5f * src.size.x, 0.5f * src.size.y}};
+    Vector2f dst_center = {{0.5f * dst.size.x, 0.5f * dst.size.y}};
     transform = m2f_inverse(transform);
     FOR_EACH_PIXEL(dst) {
-        Vector2f from_center = {0.5f + col - dst_center.x, 0.5f + row - dst_center.y};
-        Vector2f src_position = v2f_add(src_center, m2f_transform(transform, from_center));
+        Vector2f from_center = {{0.5f + col - dst_center.x, 0.5f + row - dst_center.y}};
+        Vector2f src_position = (Vector2f)(src_center.z + m2f_transform(transform, from_center).z);
         if (src_position.x < 0.0f || src_position.x >= src.size.x || src_position.y < 0.0f ||
                 src_position.y >= src.size.y) {
             PIXEL(dst, row, col) = bg_fill;
@@ -228,10 +228,10 @@ void img_draw_polygon(
 
 void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f center_to_vertex,
         uint8_t order, uint8_t color, uint8_t width) {
-    Vector2f rotation_increment = {cosf(2 * (float) M_PI / order), sinf(2 * (float) M_PI / order)};
+    Vector2f rotation_increment = {{cosf(2 * M_PI_F / order), sinf(2 * M_PI_F / order)}};
     ImagePoint previous_vertex = {center.x + center_to_vertex.x, center.y + center_to_vertex.y};
     for (uint8_t i = 0; i < order; ++i) {
-        center_to_vertex = v2f_rotate(center_to_vertex, rotation_increment);
+        center_to_vertex.z *= rotation_increment.z;
         ImagePoint next_vertex = {center.x + center_to_vertex.x, center.y + center_to_vertex.y};
         img_draw_line(mat, previous_vertex, next_vertex, color, width);
         previous_vertex = next_vertex;
@@ -240,13 +240,13 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
 
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
     IMG_FILL(dst, 0);
-    float angle_resolution = M_PI / dst.size.y;
+    float angle_resolution = M_PI_F / dst.size.y;
     float scale_to_index =
             dst.size.x / sqrtf((src.size.y * src.size.y) + (src.size.x * src.size.x));
-    const Vector2f rot_inc = {cosf(angle_resolution), sinf(angle_resolution)};
-    Vector2f rot = {1, 0};
+    const Vector2f rot_inc = {{cosf(angle_resolution), sinf(angle_resolution)}};
+    Vector2f rot = {{1, 0}};
     for (int16_t i = 0; i < dst.size.y; ++i) {
-        rot = v2f_rotate(rot, rot_inc);
+        rot.z *= rot_inc.z;
         FOR_EACH_PIXEL(src) {
             PIXEL(dst, i, (int16_t)(((rot.y * row) + (rot.x * col)) * scale_to_index)) +=
                     PIXEL(src, row, col);
