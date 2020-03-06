@@ -84,4 +84,4 @@ static inline void img_square_distance_transform(ImageMatrixInt32 mat) {
 
 // format conversions
 void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src);
-void img_save_to_pgm(ImageMatrix image, const char* file_name);
+int img_save_to_pgm(ImageMatrix image, const char* file_name);

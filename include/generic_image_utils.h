@@ -22,6 +22,8 @@ typedef struct {
 
 #define FOR_EACH_PIXEL(MAT) FOR_EACH_NESTED_PIXEL(MAT, )
 
+#define IMG_IS_VALID(MAT) ((MAT).data && (MAT).size.x > 0 && (MAT).size.y > 0)
+
 #define IMG_CHECK_BOUNDS(MAT, ROW, COL, OFFSET)                                   \
     ((ROW) >= (OFFSET) && (COL) >= (OFFSET) && (ROW) + (OFFSET) < (MAT).size.y && \
             (COL) + (OFFSET) < (MAT).size.x)

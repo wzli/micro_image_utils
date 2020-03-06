@@ -3,20 +3,22 @@
 #include <stdio.h>
 
 void img_convolution_filter(ImageMatrix* dst, const ImageMatrix src, const ImageMatrixInt8 kernel) {
+    assert(dst && IMG_IS_VALID(*dst) && IMG_IS_VALID(src) && IMG_IS_VALID(kernel));
     IMG_CONVOLUTION(*dst, src, kernel, 1, 0, UINT8_MAX);
 }
 
 void img_max_filter(ImageMatrix* dst, const ImageMatrix src, uint16_t block_size) {
+    assert(dst && IMG_IS_VALID(*dst) && IMG_IS_VALID(src) && block_size > 0);
     IMG_REDUCE_FILTER(*dst, src, block_size, MAX);
 }
 
 void img_min_filter(ImageMatrix* dst, const ImageMatrix src, uint16_t block_size) {
+    assert(dst && IMG_IS_VALID(*dst) && IMG_IS_VALID(src) && block_size > 0);
     IMG_REDUCE_FILTER(*dst, src, block_size, MIN);
 }
 
 void img_median_filter(ImageMatrix* dst, const ImageMatrix src, ImageMatrix window) {
-    assert(window.data);
-    assert(IMG_PIXEL_COUNT(window) > 1);
+    assert(dst && IMG_IS_VALID(*dst) && IMG_IS_VALID(src) && IMG_IS_VALID(window));
     IMG_VALID_PADDING(*dst, src, window);
     int16_t middle_index = IMG_PIXEL_COUNT(window) / 2;
     FOR_EACH_PIXEL(*dst) {
@@ -28,11 +30,13 @@ void img_median_filter(ImageMatrix* dst, const ImageMatrix src, ImageMatrix wind
 }
 
 uint8_t img_nearest_interpolation(const ImageMatrix mat, Vector2f position) {
+    assert(IMG_IS_VALID(mat));
     return PIXEL(mat, CLAMP((int16_t) position.y, 0, mat.size.y - 1),
             CLAMP((int16_t) position.x, 0, mat.size.x - 1));
 }
 
 uint8_t img_bilinear_interpolation(const ImageMatrix mat, Vector2f position) {
+    assert(IMG_IS_VALID(mat));
     int16_t right = position.x + 0.5f;
     int16_t bottom = position.y + 0.5f;
     int16_t left = MAX(right - 1, 0);
@@ -48,6 +52,7 @@ uint8_t img_bilinear_interpolation(const ImageMatrix mat, Vector2f position) {
 }
 
 static inline float cubic_interpolation(float p[4], float x) {
+    assert(p);
     return p[1] + 0.5f * x *
                           (p[2] - p[0] +
                                   x * (2.0f * p[0] - 5.0f * p[1] + 4.0f * p[2] - p[3] +
@@ -55,6 +60,7 @@ static inline float cubic_interpolation(float p[4], float x) {
 }
 
 uint8_t img_bicubic_interpolation(const ImageMatrix mat, Vector2f position) {
+    assert(IMG_IS_VALID(mat));
     int16_t row0 = position.y - 1.5f;
     int16_t col0 = position.x - 1.5f;
     float y_points[4];
@@ -72,7 +78,7 @@ uint8_t img_bicubic_interpolation(const ImageMatrix mat, Vector2f position) {
 }
 
 void img_resize(ImageMatrix dst, const ImageMatrix src, ImageInterpolation interpolation) {
-    assert(interpolation);
+    assert(IMG_IS_VALID(dst) && IMG_IS_VALID(src) && interpolation);
     Vector2f scale = {{(float) src.size.x / dst.size.x, (float) src.size.y / dst.size.y}};
     FOR_EACH_PIXEL(dst) {
         Vector2f position = {{0.5f + col, 0.5f + row}};
@@ -88,9 +94,8 @@ void img_rotate(ImageMatrix dst, const ImageMatrix src, Vector2f rotation, uint8
 
 void img_affine_transform(ImageMatrix dst, const ImageMatrix src, Matrix2f transform,
         uint8_t bg_fill, ImageInterpolation interpolation) {
-    assert(interpolation);
-    assert(!m2f_is_nan(transform));
-    assert(m2f_determinant(transform) != 0.0f);
+    assert(IMG_IS_VALID(dst) && IMG_IS_VALID(src) && interpolation);
+    assert(!m2f_is_nan(transform) && m2f_determinant(transform) != 0.0f);
     Vector2f src_center = {{0.5f * src.size.x, 0.5f * src.size.y}};
     Vector2f dst_center = {{0.5f * dst.size.x, 0.5f * dst.size.y}};
     transform = m2f_inverse(transform);
@@ -107,6 +112,7 @@ void img_affine_transform(ImageMatrix dst, const ImageMatrix src, Matrix2f trans
 }
 
 void img_histogram(uint32_t histogram[256], const ImageMatrix mat) {
+    assert(histogram && IMG_IS_VALID(mat));
     for (uint16_t i = 0; i < 256; ++i) {
         histogram[i] = 0;
     }
@@ -114,6 +120,7 @@ void img_histogram(uint32_t histogram[256], const ImageMatrix mat) {
 }
 
 uint8_t img_compute_otsu_threshold(const uint32_t histogram[256]) {
+    assert(histogram);
     // "A C++ Implementation of Otsu’s Image Segmentation Method", 2016.
     int32_t N = 0;
     int32_t sum = 0;
@@ -147,7 +154,7 @@ uint8_t img_compute_otsu_threshold(const uint32_t histogram[256]) {
 
 void img_draw_line(ImageMatrix mat, ImagePoint from, ImagePoint to, uint8_t color, uint8_t width) {
     // Bresenham's Line Algorithm
-    assert(width);
+    assert(IMG_IS_VALID(mat) && width > 0);
     int16_t dx = to.x - from.x;
     int16_t dy = to.y - from.y;
     uint8_t swap_xy = ABS(dy) > ABS(dx);
@@ -190,7 +197,7 @@ void img_draw_line(ImageMatrix mat, ImagePoint from, ImagePoint to, uint8_t colo
 }
 
 void img_draw_box(ImageMatrix mat, ImagePoint from, ImagePoint to, uint8_t color, uint8_t width) {
-    assert(width);
+    assert(IMG_IS_VALID(mat) && width > 0);
     if (from.x > to.x) {
         SWAP(from.x, to.x);
     }
@@ -221,6 +228,7 @@ void img_draw_box(ImageMatrix mat, ImagePoint from, ImagePoint to, uint8_t color
 
 void img_draw_polygon(
         ImageMatrix mat, const ImagePoint* vertices, uint8_t len, uint8_t color, uint8_t width) {
+    assert(IMG_IS_VALID(mat) && vertices && len > 0 && width > 0);
     for (uint8_t prev = 0; len--; prev = len) {
         img_draw_line(mat, vertices[prev], vertices[len], color, width);
     }
@@ -228,6 +236,7 @@ void img_draw_polygon(
 
 void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f center_to_vertex,
         uint8_t order, uint8_t color, uint8_t width) {
+    assert(IMG_IS_VALID(mat));
     Vector2f rotation_increment = {{cosf(2 * M_PI_F / order), sinf(2 * M_PI_F / order)}};
     ImagePoint previous_vertex = {center.x + center_to_vertex.x, center.y + center_to_vertex.y};
     for (uint8_t i = 0; i < order; ++i) {
@@ -239,6 +248,7 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
 }
 
 void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
+    assert(IMG_IS_VALID(dst) && IMG_IS_VALID(src));
     IMG_FILL(dst, 0);
     float angle_resolution = M_PI_F / dst.size.y;
     float scale_to_index =
@@ -256,6 +266,7 @@ void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
 }
 
 void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src) {
+    assert(dst && IMG_IS_VALID(*dst) && IMG_IS_VALID(src));
     const uint8_t(*data_rgb888)[3] = (uint8_t(*)[3]) src.data;
     int32_t data_len = IMG_PIXEL_COUNT(src);
     for (int32_t i = 0; i < data_len; ++i) {
@@ -264,9 +275,18 @@ void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src) {
     dst->size = src.size;
 }
 
-void img_save_to_pgm(ImageMatrix image, const char* file_name) {
+int img_save_to_pgm(ImageMatrix image, const char* file_name) {
+    assert(file_name && IMG_IS_VALID(image));
     FILE* pgm_file = fopen(file_name, "wb");
-    fprintf(pgm_file, "P5\n%u %u\n%u\n", image.size.x, image.size.y, 255);
-    fwrite(image.data, sizeof(image.data[0]), IMG_PIXEL_COUNT(image), pgm_file);
-    fclose(pgm_file);
+    if (!pgm_file) {
+        return -1;
+    }
+    if (0 > fprintf(pgm_file, "P5\n%u %u\n%u\n", image.size.x, image.size.y, 255)) {
+        return ferror(pgm_file);
+    }
+    size_t len = IMG_PIXEL_COUNT(image);
+    if (len != fwrite(image.data, 1, len, pgm_file)) {
+        return ferror(pgm_file);
+    }
+    return fclose(pgm_file);
 }
