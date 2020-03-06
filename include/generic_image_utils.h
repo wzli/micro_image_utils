@@ -114,6 +114,13 @@ typedef struct {
     } else                                                                                       \
         IMG_SET_SIZE(DST, 0, 0)
 
+#define IMG_PASTE(DST, SRC, TOP_LEFT)                                                          \
+    if (IMG_CHECK_BOUNDS(DST, (TOP_LEFT).y, (TOP_LEFT).x, 0) &&                                \
+            IMG_CHECK_BOUNDS(                                                                  \
+                    DST, (TOP_LEFT).y + (SRC).size.y - 1, (TOP_LEFT).x + (SRC).size.x - 1, 0)) \
+        FOR_EACH_PIXEL(SRC)                                                                    \
+    PIXEL(DST, row + (TOP_LEFT).y, col + (TOP_LEFT).x) = PIXEL(SRC, row, col);
+
 #define IMG_FLIP_INPLACE(MAT, F_ROW, F_COL)                   \
     FOR_EACH_PIXEL(MAT)                                       \
     if (row < (F_ROW) || col < (F_COL)) {                     \

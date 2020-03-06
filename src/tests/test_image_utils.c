@@ -99,6 +99,23 @@ static int test_image_crop() {
     return 0;
 }
 
+static int test_image_paste() {
+    IMG_SET_SIZE(buf_img, 7, 7);
+    IMG_FILL(buf_img, 0);
+    ImagePoint top_left = {-1, -1};
+    IMG_PASTE(buf_img, test_img, top_left);
+    FOR_EACH_PIXEL(buf_img) { test_assert(PIXEL(buf_img, row, col) == 0); }
+    top_left.x = 0;
+    top_left.y = 0;
+    IMG_PASTE(buf_img, test_img, top_left);
+    FOR_EACH_PIXEL(buf_img) {
+        test_assert(PIXEL(buf_img, row, col) == ((row >= test_img.size.y || col >= test_img.size.x)
+                                                                ? 0
+                                                                : PIXEL(test_img, row, col)));
+    }
+    return 0;
+}
+
 static int test_image_transpose() {
     IMG_TRANSPOSE(buf_img, test_img);
     FOR_EACH_PIXEL(buf_img) { test_assert(PIXEL(buf_img, row, col) == PIXEL(test_img, col, row)); }
@@ -276,6 +293,7 @@ int test_image_utils() {
     test_run(test_image_apply_kernel);
     test_run(test_image_threshold);
     test_run(test_image_crop);
+    test_run(test_image_paste);
     test_run(test_image_transpose);
     test_run(test_image_vflip);
     test_run(test_image_hflip);
