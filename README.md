@@ -9,7 +9,7 @@ A light weight and portable image processing library designed for resource const
 
 ## Functions
 
-Summary of provided functions (see [image_utils.h](./include/image_utils) for full list and details) :
+Summary of provided functions (see [image_utils.h](./include/image_utils.h) for full list and details) :
 
 ### Image Editing
 - Crop, Resize, Rotate, Skew, Flip, Normalize
@@ -37,7 +37,7 @@ cd micro_image_utils
 make
 ./build/test
 ```
-Refer to the [Makefile](./Makefile) and [Unit Tests](./tests/test_image_utils.c) for integration and usage example.
+Refer to the [Makefile](./Makefile) and [Unit Tests](./src/tests/test_image_utils.c) for integration and usage example.
 
 ## Limitations
 - Single-threaded
