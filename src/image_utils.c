@@ -265,14 +265,12 @@ void img_hough_line_transform(ImageMatrixInt32 dst, const ImageMatrix src) {
     IMG_NORMALIZE(dst, dst);
 }
 
-void img_convert_from_rgb888(ImageMatrix* dst, const ImageMatrix src) {
-    assert(dst && IMG_IS_VALID(*dst) && IMG_IS_VALID(src));
-    const uint8_t(*data_rgb888)[3] = (uint8_t(*)[3]) src.data;
-    int32_t data_len = IMG_PIXEL_COUNT(src);
-    for (int32_t i = 0; i < data_len; ++i) {
-        dst->data[i] = (data_rgb888[i][0] + data_rgb888[i][1] + data_rgb888[i][2]) / 3;
+void img_convert_from_rgb888(ImageMatrix dst, const uint8_t* src) {
+    assert(src && IMG_IS_VALID(dst));
+    int32_t data_len = IMG_PIXEL_COUNT(dst);
+    for (int32_t i = 0; i < data_len; ++i, src += 3) {
+        dst.data[i] = (src[0] + src[1] + src[2]) / 3;
     }
-    dst->size = src.size;
 }
 
 int img_save_to_pgm(ImageMatrix image, const char* file_name) {
