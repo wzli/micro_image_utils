@@ -22,7 +22,7 @@ void img_median_filter(ImageMatrix* dst, const ImageMatrix src, ImageMatrix wind
     IMG_VALID_PADDING(*dst, src, window);
     int16_t middle_index = IMG_PIXEL_COUNT(window) / 2;
     FOR_EACH_PIXEL(*dst) {
-        ImagePoint top_left = {col, row};
+        ImagePoint top_left = {{col, row}};
         IMG_CROP(window, src, top_left);
         QUICK_SELECT(window.data, IMG_PIXEL_COUNT(window), middle_index);
         PIXEL(*dst, row, col) = window.data[middle_index];
@@ -238,10 +238,10 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
         uint8_t order, uint8_t color, uint8_t width) {
     assert(IMG_IS_VALID(mat));
     Vector2f rotation_increment = {{cosf(2 * M_PI_F / order), sinf(2 * M_PI_F / order)}};
-    ImagePoint previous_vertex = {center.x + center_to_vertex.x, center.y + center_to_vertex.y};
+    ImagePoint previous_vertex = {{center.x + center_to_vertex.x, center.y + center_to_vertex.y}};
     for (uint8_t i = 0; i < order; ++i) {
         center_to_vertex.z *= rotation_increment.z;
-        ImagePoint next_vertex = {center.x + center_to_vertex.x, center.y + center_to_vertex.y};
+        ImagePoint next_vertex = {{center.x + center_to_vertex.x, center.y + center_to_vertex.y}};
         img_draw_line(mat, previous_vertex, next_vertex, color, width);
         previous_vertex = next_vertex;
     };
