@@ -101,9 +101,10 @@ void img_affine_transform(ImageMatrix dst, const ImageMatrix src, Matrix2f trans
     transform = m2f_inverse(transform);
     FOR_EACH_PIXEL(dst) {
         Vector2f from_center = {{0.5f + col - dst_center.xy[0], 0.5f + row - dst_center.xy[1]}};
-        Vector2f src_position = (Vector2f)(src_center.z + m2f_transform(transform, from_center).z);
-        if (src_position.xy[0] < 0.0f || src_position.xy[0] >= src.size.x || src_position.xy[1] < 0.0f ||
-                src_position.xy[1] >= src.size.y) {
+        Vector2f src_position = src_center;
+        src_position.z += m2f_transform(transform, from_center).z;
+        if (src_position.xy[0] < 0.0f || src_position.xy[0] >= src.size.x ||
+                src_position.xy[1] < 0.0f || src_position.xy[1] >= src.size.y) {
             PIXEL(dst, row, col) = bg_fill;
             continue;
         }
@@ -238,10 +239,12 @@ void img_draw_regular_polygon(ImageMatrix mat, ImagePoint center, Vector2f cente
         uint8_t order, uint8_t color, uint8_t width) {
     assert(IMG_IS_VALID(mat));
     Vector2f rotation_increment = {{cosf(2 * M_PI_F / order), sinf(2 * M_PI_F / order)}};
-    ImagePoint previous_vertex = {center.x + center_to_vertex.xy[0], center.y + center_to_vertex.xy[1]};
+    ImagePoint previous_vertex = {
+            center.x + center_to_vertex.xy[0], center.y + center_to_vertex.xy[1]};
     for (uint8_t i = 0; i < order; ++i) {
         center_to_vertex.z *= rotation_increment.z;
-        ImagePoint next_vertex = {center.x + center_to_vertex.xy[0], center.y + center_to_vertex.xy[1]};
+        ImagePoint next_vertex = {
+                center.x + center_to_vertex.xy[0], center.y + center_to_vertex.xy[1]};
         img_draw_line(mat, previous_vertex, next_vertex, color, width);
         previous_vertex = next_vertex;
     };

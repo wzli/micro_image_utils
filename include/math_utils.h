@@ -72,11 +72,13 @@ static inline float v2f_norm_sqr(Vector2f vec) {
 }
 
 static inline Vector2f v2f_normalize(Vector2f vec) {
-    return (Vector2f)(vec.z * inv_sqrtf(v2f_norm_sqr(vec)));
+    vec.z *= inv_sqrtf(v2f_norm_sqr(vec));
+    return vec;
 }
 
 static inline float v2f_distance_sqr(Vector2f a, Vector2f b) {
-    return v2f_norm_sqr((Vector2f)(b.z - a.z));
+    b.z -= a.z;
+    return v2f_norm_sqr(b);
 }
 
 static inline float v2f_distance(Vector2f a, Vector2f b) {
@@ -106,8 +108,9 @@ static inline Matrix2f m2f_transpose(Matrix2f mat) {
 }
 
 static inline Matrix2f m2f_scale(Matrix2f mat, float scale) {
-    return (Matrix2f){
-            .rows = {(Vector2f)(mat.rows[0].z * scale), (Vector2f)(mat.rows[1].z * scale)}};
+    mat.rows[0].z *= scale;
+    mat.rows[1].z *= scale;
+    return mat;
 }
 
 static inline Matrix2f m2f_inverse(Matrix2f mat) {
