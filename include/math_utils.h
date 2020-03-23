@@ -6,19 +6,19 @@
 
 // define math constants
 
-static const float M_E_F = expf(1);
-static const float M_LOG2E_F = 1.0f / logf(2);
-static const float M_LOG10E_F = 1.0f / logf(10);
-static const float M_LN2_F = logf(2);
-static const float M_LN10_F = logf(10);
-static const float M_PI_F = acosf(-1);
-static const float M_PI_2_F = asinf(1);
-static const float M_PI_4_F = atanf(1);
-static const float M_1_PI_F = 1.0f / acosf(-1);
-static const float M_2_PI_F = 1.0f / asinf(1);
-static const float M_2_SQRTPI_F = 2.0f / sqrtf(acosf(-1));
-static const float M_SQRT2_F = sqrtf(2);
-static const float M_SQRT1_2_F = 1.0f / sqrtf(2);
+static const float M_E_F = 2.71828182845904523536f;
+static const float M_LOG2E_F = 1.44269504088896340736f;
+static const float M_LOG10E_F = 0.434294481903251827651f;
+static const float M_LN2_F = 0.693147180559945309417f;
+static const float M_LN10_F = 2.30258509299404568402f;
+static const float M_PI_F = 3.14159265358979323846f;
+static const float M_PI_2_F = 1.57079632679489661923f;
+static const float M_PI_4_F = 0.785398163397448309616f;
+static const float M_1_PI_F = 0.318309886183790671538f;
+static const float M_2_PI_F = 0.636619772367581343076f;
+static const float M_2_SQRTPI_F = 1.12837916709551257390f;
+static const float M_SQRT2_F = 1.41421356237309504880f;
+static const float M_SQRT1_2_F = 0.707106781186547524401f;
 
 // define structs
 
