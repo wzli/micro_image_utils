@@ -63,13 +63,14 @@ uint8_t img_bicubic_interpolation(const ImageMatrix mat, Vector2f position) {
     assert(IMG_IS_VALID(mat));
     int16_t row0 = position.xy[1] - 1.5f;
     int16_t col0 = position.xy[0] - 1.5f;
+    if (row0 < 0 || col0 < 0 || row0 + 4 > mat.size.y || col0 + 4 > mat.size.x) {
+        return img_bilinear_interpolation(mat, position);
+    }
     float y_points[4];
     for (int16_t i = 0; i < 4; ++i) {
-        int16_t row = CLAMP(row0 + i, 0, mat.size.y - 1);
         float x_points[4];
         for (int16_t j = 0; j < 4; ++j) {
-            int16_t col = CLAMP(col0 + j, 0, mat.size.x - 1);
-            x_points[j] = PIXEL(mat, row, col);
+            x_points[j] = PIXEL(mat, row0 + i, col0 + j);
         }
         y_points[i] = cubic_interpolation(x_points, position.xy[0] - col0 - 1.5f);
     }
