@@ -108,8 +108,8 @@ typedef struct {
     if (IMG_CHECK_BOUNDS(SRC, (TOP_LEFT).y, (TOP_LEFT).x, 0) &&                                  \
             IMG_CHECK_BOUNDS(                                                                    \
                     SRC, (TOP_LEFT).y + (DST).size.y - 1, (TOP_LEFT).x + (DST).size.x - 1, 0)) { \
-        FOR_EACH_PIXEL(DST) {                                                                    \
-            PIXEL(DST, row, col) = PIXEL(SRC, row + (TOP_LEFT).y, col + (TOP_LEFT).x);           \
+        FOR_EACH_NESTED_PIXEL(DST, c_) {                                                         \
+            PIXEL(DST, c_row, c_col) = PIXEL(SRC, c_row + (TOP_LEFT).y, c_col + (TOP_LEFT).x);   \
         }                                                                                        \
     } else                                                                                       \
         IMG_SET_SIZE(DST, 0, 0)
