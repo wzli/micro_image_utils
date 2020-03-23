@@ -1,15 +1,9 @@
 #pragma once
 #include "generic_utils.h"
 
-typedef union {
-    struct {
-        int16_t col;
-        int16_t row;
-    };
-    struct {
-        int16_t x;
-        int16_t y;
-    };
+typedef struct {
+    int16_t x;
+    int16_t y;
 } ImagePoint;
 
 #define IMG_MATRIX_TYPEDEF(NAME, TYPE) \

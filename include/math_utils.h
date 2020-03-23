@@ -21,25 +21,14 @@ static const float M_SQRT2_F = 1.41421356237309504880f;
 static const float M_SQRT1_2_F = 0.707106781186547524401f;
 
 // define structs
-
 typedef union {
-    struct {
-        float x;
-        float y;
-    };
+    float xy[2];
     float complex z;
-    float data[2];
 } Vector2f;
 
 typedef union {
-    struct {
-        float a;
-        float b;
-        float c;
-        float d;
-    };
-    Vector2f rows[2];
     float data[4];
+    Vector2f rows[2];
 } Matrix2f;
 
 // float operations
@@ -59,23 +48,23 @@ static inline float inv_sqrtf(float x) {
 // vector operations
 
 static inline bool v2f_is_nan(Vector2f vec) {
-    return isnan(vec.x) || isnan(vec.y);
+    return isnan(vec.xy[0]) || isnan(vec.xy[1]);
 }
 
 static inline Vector2f v2f_multiply(Vector2f a, Vector2f b) {
-    return (Vector2f){{a.x * b.x, a.y * b.y}};
+    return (Vector2f){{a.xy[0] * b.xy[0], a.xy[1] * b.xy[1]}};
 }
 
 static inline float v2f_dot(Vector2f a, Vector2f b) {
-    return a.x * b.x + a.y * b.y;
+    return a.xy[0] * b.xy[0] + a.xy[1] * b.xy[1];
 }
 
 static inline float v2f_cross(Vector2f a, Vector2f b) {
-    return a.x * b.y - a.y * b.x;
+    return a.xy[0] * b.xy[1] - a.xy[1] * b.xy[0];
 }
 
 static inline float v2f_norm_l1(Vector2f vec) {
-    return fabsf(vec.x) + fabsf(vec.y);
+    return fabsf(vec.xy[0]) + fabsf(vec.xy[1]);
 }
 
 static inline float v2f_norm_sqr(Vector2f vec) {
@@ -113,7 +102,7 @@ static inline float m2f_determinant(Matrix2f mat) {
 }
 
 static inline Matrix2f m2f_transpose(Matrix2f mat) {
-    return (Matrix2f){{mat.a, mat.c, mat.b, mat.d}};
+    return (Matrix2f){{mat.data[0], mat.data[2], mat.data[1], mat.data[3]}};
 }
 
 static inline Matrix2f m2f_scale(Matrix2f mat, float scale) {
@@ -124,10 +113,10 @@ static inline Matrix2f m2f_scale(Matrix2f mat, float scale) {
 static inline Matrix2f m2f_inverse(Matrix2f mat) {
     float inv_det = 1.0f / m2f_determinant(mat);
     return (Matrix2f){{
-            mat.d * inv_det,
-            -mat.b * inv_det,
-            -mat.c * inv_det,
-            mat.a * inv_det,
+            mat.data[3] * inv_det,
+            -mat.data[1] * inv_det,
+            -mat.data[2] * inv_det,
+            mat.data[0] * inv_det,
     }};
 }
 

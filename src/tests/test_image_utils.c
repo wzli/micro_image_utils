@@ -90,7 +90,7 @@ static int test_image_threshold() {
 
 static int test_image_crop() {
     IMG_SET_SIZE(buf_img, 2, 2);
-    ImagePoint top_left = {{3, 3}};
+    ImagePoint top_left = {3, 3};
     IMG_CROP(buf_img, test_img, top_left);
     test_assert(IMG_PIXEL_COUNT(buf_img) == 4);
     FOR_EACH_PIXEL(buf_img) {
@@ -102,7 +102,7 @@ static int test_image_crop() {
 static int test_image_paste() {
     IMG_SET_SIZE(buf_img, 7, 7);
     IMG_FILL(buf_img, 0);
-    ImagePoint top_left = {{-1, -1}};
+    ImagePoint top_left = {-1, -1};
     IMG_PASTE(buf_img, test_img, top_left);
     FOR_EACH_PIXEL(buf_img) { test_assert(PIXEL(buf_img, row, col) == 0); }
     top_left.x = 0;
@@ -189,22 +189,22 @@ static int test_image_resize() {
 
 static int test_image_draw_line() {
     IMG_COPY(buf_img, test_img);
-    img_draw_line(buf_img, (ImagePoint){{0, 0}}, (ImagePoint){{5, 0}}, 255, 2);
+    img_draw_line(buf_img, (ImagePoint){0, 0}, (ImagePoint){5, 0}, 255, 2);
     FOR_EACH_PIXEL(buf_img) { test_assert((row < 2) == (PIXEL(buf_img, row, col) == 255)); }
     return 0;
 }
 
 static int test_image_draw_box() {
     IMG_FILL(buf_img, 0);
-    img_draw_box(buf_img, (ImagePoint){{-3, -7}}, (ImagePoint){{10, 20}}, 255, 100);
+    img_draw_box(buf_img, (ImagePoint){-3, -7}, (ImagePoint){10, 20}, 255, 100);
     FOR_EACH_PIXEL(buf_img) { test_assert(PIXEL(buf_img, row, col) == 255); }
 
     IMG_FILL(buf_img, 0);
-    img_draw_box(buf_img, (ImagePoint){{1, 1}}, (ImagePoint){{3, 3}}, 255, 1);
+    img_draw_box(buf_img, (ImagePoint){1, 1}, (ImagePoint){3, 3}, 255, 1);
     int sum = 0;
     IMG_PIXEL_SUM(sum, buf_img);
     test_assert(sum == 8 * 255);
-    img_draw_box(buf_img, (ImagePoint){{1, 1}}, (ImagePoint){{3, 3}}, 255, 2);
+    img_draw_box(buf_img, (ImagePoint){1, 1}, (ImagePoint){3, 3}, 255, 2);
     sum = 0;
     IMG_PIXEL_SUM(sum, buf_img);
     test_assert(sum == 9 * 255);
@@ -212,7 +212,7 @@ static int test_image_draw_box() {
 }
 
 static int test_image_manhattan_distance_transform() {
-    ImageMatrixInt32 dist_img = {(int32_t[5 * 5]){}, {{5, 5}}};
+    ImageMatrixInt32 dist_img = {(int32_t[5 * 5]){0}, {5, 5}};
     IMG_FILL(dist_img, 255);
     img_manhattan_distance_transform(dist_img);
     FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == 255); }
@@ -224,7 +224,7 @@ static int test_image_manhattan_distance_transform() {
 }
 
 static int test_image_square_distance_transform() {
-    ImageMatrixInt32 dist_img = {(int32_t[6 * 6]){}, {{5, 5}}};
+    ImageMatrixInt32 dist_img = {(int32_t[6 * 6]){0}, {5, 5}};
     IMG_FILL(dist_img, 255);
     img_square_distance_transform(dist_img);
     FOR_EACH_PIXEL(dist_img) { test_assert(PIXEL(dist_img, row, col) == 255); }
@@ -236,7 +236,7 @@ static int test_image_square_distance_transform() {
 }
 
 static int test_image_max_filter() {
-    ImageMatrix src_img = {(uint8_t[5 * 5]){}, {{5, 5}}};
+    ImageMatrix src_img = {(uint8_t[5 * 5]){0}, {5, 5}};
     IMG_FILL(src_img, 0);
     PIXEL(src_img, 2, 2) = 255;
     img_max_filter(&buf_img, src_img, 2);
@@ -251,7 +251,7 @@ static int test_image_max_filter() {
 }
 
 static int test_image_min_filter() {
-    ImageMatrix src_img = {(uint8_t[5 * 5]){}, {{5, 5}}};
+    ImageMatrix src_img = {(uint8_t[5 * 5]){0}, {5, 5}};
     IMG_FILL(src_img, 255);
     PIXEL(src_img, 2, 2) = 0;
     img_min_filter(&buf_img, src_img, 2);
@@ -266,7 +266,7 @@ static int test_image_min_filter() {
 }
 
 static int test_image_fast_fourier_transform() {
-    ImageMatrixComplex img = {(Vector2f[4 * 4]){}, {{4, 4}}};
+    ImageMatrixComplex img = {(Vector2f[4 * 4]){{{0}}}, {4, 4}};
     Vector2f fill_val = {{1, 0}};
     IMG_FILL(img, fill_val);
     img_fast_fourier_transform(img, false);
@@ -279,8 +279,8 @@ static int test_image_fast_fourier_transform() {
 int test_image_utils() {
     uint8_t test_img_data[5 * 5];
     uint8_t buf_img_data[5 * 5 * 2];
-    test_img = (ImageMatrix){test_img_data, {{5, 5}}};
-    buf_img = (ImageMatrix){buf_img_data, {{5, 5}}};
+    test_img = (ImageMatrix){test_img_data, {5, 5}};
+    buf_img = (ImageMatrix){buf_img_data, {5, 5}};
     test_run(test_image_size);
     test_run(test_image_set_pixels);
     test_run(test_image_copy);
